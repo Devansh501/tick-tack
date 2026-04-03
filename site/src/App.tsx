@@ -5,7 +5,7 @@ import './App.css';
 const serverKey = import.meta.env.VITE_NAKAMA_SERVER_KEY || "defaultkey";
 const host = import.meta.env.VITE_NAKAMA_HOST || "127.0.0.1";
 const port = import.meta.env.VITE_NAKAMA_PORT || "7350";
-const useSsl = import.meta.env.VITE_NAKAMA_USE_SSL === "true";
+const useSsl = import.meta.env.VITE_NAKAMA_USE_SSL === "false";
 
 const client = new Client(serverKey, host, port, useSsl);
 
@@ -13,26 +13,22 @@ function App() {
   const [session, setSession] = useState<any>(null);
   const [socket, setSocket] = useState<any>(null);
   
-  // Auth State
   const [usernameInput, setUsernameInput] = useState('');
   const [isNameEntered, setIsNameEntered] = useState(false);
   
-  // Matchmaking State
   const [match, setMatch] = useState<any>(null);
   const [isMatching, setIsMatching] = useState(false);
   const [selectedMode, setSelectedMode] = useState<string>('classic');
   
-  // Game State
   const [board, setBoard] = useState(Array(9).fill(0));
   const [turn, setTurn] = useState<number>(1);
-  const [p1, setP1] = useState<string | null>(null); // these are user_ids
+  const [p1, setP1] = useState<string | null>(null);
   const [p2, setP2] = useState<string | null>(null);
-  const [playerMap, setPlayerMap] = useState<Record<string, string>>({}); // user_id -> username
+  const [playerMap, setPlayerMap] = useState<Record<string, string>>({});
   const [winner, setWinner] = useState<number | null>(null);
   const [draw, setDraw] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   
-  // New States for Timed UI
   const [activeMode, setActiveMode] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [endReason, setEndReason] = useState<string | null>(null);
@@ -47,7 +43,6 @@ function App() {
     }
     
     try {
-      // Authenticate with the provided username
       const sess = await client.authenticateDevice(deviceId, true, usernameInput.trim());
       setSession(sess);
 
@@ -57,7 +52,6 @@ function App() {
 
       setIsNameEntered(true);
       
-      // Setup socket listeners
       sock.onmatchmakermatched = async (matched: any) => {
         setIsMatching(false);
         const m = await sock.joinMatch(matched.match_id || matched.token);
@@ -94,7 +88,6 @@ function App() {
   };
 
   useEffect(() => {
-    // Whenever p1 or p2 change, fetch their actual usernames from Nakama
     async function fetchNames() {
       if (!session) return;
       const idsToFetch = [p1, p2].filter(Boolean) as string[];
@@ -129,7 +122,6 @@ function App() {
 
   const findMatch = async () => {
     setIsMatching(true);
-    // Request a match with the selected mode in string properties
     await socket.addMatchmaker(`+properties.mode:${selectedMode}`, 2, 2, { mode: selectedMode }); 
   };
 
@@ -219,12 +211,10 @@ function App() {
   const mySymbol = session.user_id === p1 ? 'X' : session.user_id === p2 ? 'O' : '';
   const isMyTurn = (turn === 1 && session.user_id === p1) || (turn === 2 && session.user_id === p2);
   
-  // Decide who the winner is
   let winnerName = null;
   if (winner === 1 && p1) winnerName = playerMap[p1] || 'Player X';
   if (winner === 2 && p2) winnerName = playerMap[p2] || 'Player O';
 
-  // Opponent name for display
   const opponentId = session.user_id === p1 ? p2 : p1;
   const opponentName = (opponentId && playerMap[opponentId]) ? playerMap[opponentId] : 'Opponent';
 
@@ -232,7 +222,6 @@ function App() {
     <div className="app-container">
       <h1 className="title">TIC TAC TOE</h1>
       
-      {/* Result Modal Overlay */}
       {(winner !== null || draw) && (
         <div className="result-modal-overlay">
           <div className="result-modal-content">
