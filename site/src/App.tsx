@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Client } from '@heroiclabs/nakama-js';
 import './App.css';
 
-const serverKey = import.meta.env.VITE_NAKAMA_SERVER_KEY || "defaultkey";
-const host = import.meta.env.VITE_NAKAMA_HOST || "127.0.0.1";
-const port = import.meta.env.VITE_NAKAMA_PORT || "7350";
-const useSsl = import.meta.env.VITE_NAKAMA_USE_SSL === "false";
+const serverKey = import.meta.env.VITE_NAKAMA_SERVER_KEY;
+const host = import.meta.env.VITE_NAKAMA_HOST;
+const port = import.meta.env.VITE_NAKAMA_PORT;
 
-const client = new Client(serverKey, host, port, useSsl);
+const client = new Client(serverKey, host, port, false);
 
 function App() {
   const [session, setSession] = useState<any>(null);
