@@ -7,6 +7,10 @@
     Demonstrating a decoupled architecture using a React frontend and a Nakama game server backend, connected via secure WebSockets.
   </p>
 
+  <h3>
+    🔴 <a href="http://dev-tick-tack.surge.sh/">Play the Live Demo Here</a> 🔴
+  </h3>
+
   <div>
     <img src="https://img.shields.io/badge/Frontend-React-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
     <img src="https://img.shields.io/badge/Backend-Nakama-3399FF?style=for-the-badge" alt="Nakama" />
@@ -26,7 +30,7 @@
   <li><strong>Frontend (Client):</strong> Built with <code>React.js</code>. React was chosen for its efficient component-based UI rendering, which is ideal for managing the rapidly changing state of a game board. The client uses the official Nakama JavaScript SDK to handle authentication, matchmaking, and real-time state synchronization over WebSockets.</li>
   <li><strong>Backend (Game Server):</strong> Powered by <strong>Nakama</strong> (by Heroic Labs) running alongside a <strong>PostgreSQL</strong> database. Nakama was selected because it provides out-of-the-box infrastructure for user authentication, server-authoritative multiplayer logic, and real-time socket connections, preventing client-side cheating.</li>
   <li><strong>Hosting & Infrastructure:</strong> The backend is hosted on an <strong>Oracle Cloud ARM</strong> instance using Docker.</li>
-  <li><strong>Networking & Security:</strong> To resolve Mobile browser Mixed Content (HTTP/HTTPS) and CORS policies, the architecture implements <strong>Cloudflare Tunnels</strong>. This creates a secure, encrypted HTTPS/WSS tunnel directly to the Nakama instance, ensuring mobile compatibility and secure data transmission.</li>
+  <li><strong>Networking & Security:</strong> To resolve Mobile browser Mixed Content (HTTP/HTTPS) and CORS policies, the architecture implements <strong>Cloudflare Tunnels</strong>. This creates a secure, encrypted HTTPS/WSS tunnel directly to the Nakama instance, ensuring compatibility and secure data transmission.</li>
 </ul>
 
 <hr />
@@ -85,7 +89,7 @@
   </li>
   <li>
     <strong>Deploy:</strong> Use the Surge CLI to deploy the static build folder to a public URL.
-    <pre><code>cd build<br/>surge --domain your-unique-domain.surge.sh</code></pre>
+    <pre><code>cd build<br/>surge --domain dev-tick-tack.surge.sh</code></pre>
   </li>
 </ol>
 
