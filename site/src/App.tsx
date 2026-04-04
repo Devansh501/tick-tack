@@ -6,7 +6,7 @@ const serverKey = import.meta.env.VITE_NAKAMA_SERVER_KEY;
 const host = import.meta.env.VITE_NAKAMA_HOST;
 const port = import.meta.env.VITE_NAKAMA_PORT;
 
-const client = new Client(serverKey, host, port, false);
+const client = new Client(serverKey, host, port, true);
 
 function App() {
   const [session, setSession] = useState<any>(null);
@@ -36,16 +36,17 @@ function App() {
     if (!usernameInput.trim()) return;
     
     let deviceId = localStorage.getItem("deviceId");
-    if (!deviceId) {
-      deviceId = crypto.randomUUID();
-      localStorage.setItem("deviceId", deviceId);
-    }
+      if (!deviceId) {
+        // Fallback for HTTP: Create a random string instead of using crypto
+        deviceId = "device-" + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+        localStorage.setItem("deviceId", deviceId);
+      }
     
     try {
       const sess = await client.authenticateDevice(deviceId, true, usernameInput.trim());
       setSession(sess);
 
-      const sock = client.createSocket(false, false);
+      const sock = client.createSocket(true, false);
       await sock.connect(sess, true);
       setSocket(sock);
 
