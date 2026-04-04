@@ -30,7 +30,7 @@
   <li><strong>Frontend (Client):</strong> Built with <code>React.js</code>. React was chosen for its efficient component-based UI rendering, which is ideal for managing the rapidly changing state of a game board. The client uses the official Nakama JavaScript SDK to handle authentication, matchmaking, and real-time state synchronization over WebSockets.</li>
   <li><strong>Backend (Game Server):</strong> Powered by <strong>Nakama</strong> (by Heroic Labs) running alongside a <strong>PostgreSQL</strong> database. Nakama was selected because it provides out-of-the-box infrastructure for user authentication, server-authoritative multiplayer logic, and real-time socket connections, preventing client-side cheating.</li>
   <li><strong>Hosting & Infrastructure:</strong> The backend is hosted on an <strong>Oracle Cloud ARM</strong> instance using Docker.</li>
-  <li><strong>Networking & Security:</strong> To resolve Mobile browser Mixed Content (HTTP/HTTPS) and CORS policies, the architecture implements <strong>Cloudflare Tunnels</strong>. This creates a secure, encrypted HTTPS/WSS tunnel directly to the Nakama instance, ensuring compatibility and secure data transmission.</li>
+  <li><strong>Networking & Security:</strong> To resolve Mobile browser Mixed Content (HTTP/HTTPS) and CORS policies, the architecture implements <strong>Cloudflare Tunnels</strong>. This creates a secure, encrypted HTTPS/WSS tunnel directly to the Nakama instance, ensuring mobile compatibility and secure data transmission.</li>
 </ul>
 
 <hr />
@@ -50,8 +50,17 @@
   <br />
   <p>Navigate to the client directory and install dependencies:</p>
   <pre><code>npm install</code></pre>
-  <p>Ensure the Nakama Client initialization in <code>src/App.js</code> is pointed to your local server:</p>
-  <pre><code>const client = new Client("defaultkey", "127.0.0.1", "7350", false);</code></pre>
+  <p>Create a <code>.env.local</code> file in the root of your React project to store your local development variables:</p>
+  <pre><code>REACT_APP_NAKAMA_URL=127.0.0.1
+REACT_APP_NAKAMA_PORT=7350
+REACT_APP_NAKAMA_SSL=false</code></pre>
+  <p>Update your Nakama Client initialization in <code>src/App.js</code> to use these variables:</p>
+  <pre><code>const client = new Client(
+  "defaultkey", 
+  process.env.REACT_APP_NAKAMA_URL, 
+  process.env.REACT_APP_NAKAMA_PORT, 
+  process.env.REACT_APP_NAKAMA_SSL === 'true'
+);</code></pre>
   <p>Start the development server:</p>
   <pre><code>npm start</code></pre>
   <p>Open <code>http://localhost:3000</code> in your browser. Open a second window to test multiplayer matchmaking!</p>
@@ -81,14 +90,16 @@
 <h3>Phase 2: Frontend Deployment (Surge)</h3>
 <ol>
   <li>
-    <strong>Update Client Config:</strong> Open <code>src/App.js</code> and update the Nakama client to use the secure Cloudflare tunnel. Set <code>useSSL</code> to <code>true</code> and the port to <code>443</code>.
+    <strong>Set Production Environment Variables:</strong> Because React compiles into static HTML/JS, you must pass the production Cloudflare URL <i>during the build step</i>. 
   </li>
   <li>
-    <strong>Build the Application:</strong> Compile the React app for production.
-    <pre><code>npm run build</code></pre>
+    <strong>Build the Application:</strong> Run the build command while injecting your production Cloudflare URL, secure port (443), and forcing SSL:
+    <br/><br/>
+    <i>Environment</i>
+    <pre><code>REACT_APP_NAKAMA_URL=your-unique-tunnel.trycloudflare.com REACT_APP_NAKAMA_PORT=443 REACT_APP_NAKAMA_SSL=true npm run build</code></pre>
   </li>
   <li>
-    <strong>Deploy:</strong> Use the Surge CLI to deploy the static build folder to a public URL.
+    <strong>Deploy:</strong> Use the Surge CLI to deploy the statically compiled build folder to your public URL.
     <pre><code>cd build<br/>surge --domain dev-tick-tack.surge.sh</code></pre>
   </li>
 </ol>
